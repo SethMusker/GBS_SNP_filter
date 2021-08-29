@@ -2,7 +2,7 @@ sMLH_MLH <- function(vcf_name,parallel=TRUE,redo=FALSE) {
   
   check<-check_continue(vcf_name,redo=redo)
   if(check==TRUE){
-    basename <- gsub(".vcf","",vcf_name)                                 
+    basename <- gsub(".vcf","",basename(vcf_name))                                 
     
     if (!require('inbreedR')) install.packages('inbreedR'); library('inbreedR')
     if (!require('vcfR')) install.packages('vcfR'); library('vcfR')
@@ -30,8 +30,8 @@ sMLH_MLH <- function(vcf_name,parallel=TRUE,redo=FALSE) {
       print("Converting formats. This step will also take a while.")  
       snp_geno <- do.call(cbind, future_apply(gt, 2, function(x) colsplit(x, "/", c("a","b"))))
       snp_genotypes <- inbreedR::convert_raw(snp_geno)
-      print("If the following prints as TRUE, your genotypes are formatted correctly")                                   
-      print(check_data(snp_genotypes))
+      # print("If the following prints as TRUE, your genotypes are formatted correctly")                                   
+      # print(check_data(snp_genotypes))
       save(snp_genotypes,file=paste(basename,"snp_genotypes.RData",sep="_"))
     }
     
