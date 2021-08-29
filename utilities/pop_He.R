@@ -1,4 +1,4 @@
-pop_He <- function(vcf_name) {  
+pop_He <- function(vcf_name,popmap) {  
 if (!require('vcfR')) install.packages('vcfR'); library('vcfR')
 if (!require('reshape')) install.packages('reshape'); library('reshape')
 if (!require('dplyr')) install.packages('dplyr'); library('dplyr')
@@ -11,7 +11,7 @@ gt[gt == "."] <- NA
 snp_geno <- as.data.frame(sapply(gt,function(x){as.numeric(gsub("/","",x,fixed=TRUE))}))
 row.names(snp_geno) <- row.names(gt)
 
-popmap <- read.table("popmap.txt",stringsAsFactors=FALSE)
+popmap <- read.table(popmap,stringsAsFactors=FALSE)
 popmap <- popmap[(which(popmap[,1] %in% row.names(snp_geno))),]
 
 pop_designations <- unlist(lapply(1:length(row.names(snp_geno)),function(x) {popmap[which(popmap[,1] %in% row.names(snp_geno)[x]),2]}))
