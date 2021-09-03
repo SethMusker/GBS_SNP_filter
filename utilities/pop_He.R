@@ -23,12 +23,14 @@ library(hierfstat)
 if (length(unique(snp_geno[,1]))==1) {
   snp_geno[,1] <- 1
 }  
-  
+ 
+cat("Calculating stats\n") 
 snp_geno_stats <- basic.stats(snp_geno)
 
 Ho <- snp_geno_stats$Ho
 Hs <- snp_geno_stats$Hs
 Fis <- snp_geno_stats$Fis
+cat("bootstrapping FIS\n")
 boot_Fis <- boot.ppfis(snp_geno,nboot=1000,quant=c(0.025,0.975),diploid=TRUE,dig=4)
  
 results_matrix <- matrix("",ncol=(dim(Ho)[2]+1),nrow=6)
@@ -43,9 +45,10 @@ results_matrix[4,(i+1)] <- 1-(mean(Ho[,i],na.rm=TRUE)/mean(Hs[,i],na.rm=TRUE))
 
 results_matrix[5:6,(2:dim(results_matrix)[2])] <- t(boot_Fis$fis.ci)
   
-basename <- gsub(".vcf","",vcf_name)
+basename <- gsub(".vcf","",basename(vcf_name))
 
-print(paste(basename,".He.txt has been written out",sep=""))
-write.table(results_matrix,(paste(basename,".He.txt",sep="")),quote=FALSE,row.names=FALSE,col.names=FALSE)  
+write.table(results_matrix,(paste(basename,".He.txt",sep="")),quote=FALSE,row.names=FALSE,col.names=FALSE,sep="\t")  
+write.csv(as.data.frame(results_matrix),(paste(basename,".He.csv",sep="")),quote=FALSE)  
+cat(paste(basename,".He.txt+csv have been written out\n",sep=""))
 
 }  
